@@ -93,4 +93,4 @@ INSERT INTO locations (name, parent_id) VALUES
 
 -- Créer un compte admin par défaut (password: yaounde0102)
 INSERT INTO users (email, password_hash, password_expiration) VALUES 
-('tanzifelix@gmail.com', '$2a$10$ftu0176ujiDMAsQgCKi8yeHqjXpDtQO3EGBkABlcfrCSSekf1e5YS', DATE_ADD(CURDATE(), INTERVAL 3 MONTH));locationslocations
+('tanzifelix@gmail.com', '$2a$10$ftu0176ujiDMAsQgCKi8yeHqjXpDtQO3EGBkABlcfrCSSekf1e5YS', DATE_ADD(CURDATE(), INTERVAL 3 MONTH));
