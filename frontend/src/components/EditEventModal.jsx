@@ -1,23 +1,22 @@
 import React, { useState, useEffect } from 'react';
 import { eventService } from '../services/eventService';
-import { validateStep1, validateStep2, validateStep3 } from '../utils/validation';
 
 function EditEventModal({ event, onClose, onUpdate }) {
     const [locations, setLocations] = useState([]);
     const [formData, setFormData] = useState({
-        clientName: event.client_name,
-        clientEmail: event.client_email,
-        clientPhone: event.client_phone,
+        clientName: event.client_name || '',
+        clientEmail: event.client_email || '',
+        clientPhone: event.client_phone || '',
         companyName: event.company_name || '',
-        locationId: event.location_id,
-        dateStart: event.date_start.slice(0, 16), // Format datetime-local
-        dateEnd: event.date_end.slice(0, 16),
-        services: event.services,
-        paymentMethod: event.payment_method,
+        locationId: event.location_id || '',
+        dateStart: event.date_start ? event.date_start.slice(0, 16) : '',
+        dateEnd: event.date_end ? event.date_end.slice(0, 16) : '',
+        services: Array.isArray(event.services) ? event.services : [],
+        paymentMethod: event.payment_method || '',
         notes: event.notes || ''
     });
-    const [errors, setErrors] = useState({});
     const [loading, setLoading] = useState(false);
+    const [error, setError] = useState('');
 
     const services = [
         'Interprétation simultanée à distance',
@@ -33,10 +32,11 @@ function EditEventModal({ event, onClose, onUpdate }) {
     ];
 
     const paymentMethods = [
-        'Virement bancaire',
+        'Chèque',
         'Espèces',
-        'Mobile Money',
-        'Chèque'
+        'MTN Mobile Money',
+        'Orange Money',
+        'Virement bancaire'
     ];
 
     useEffect(() => {
@@ -55,9 +55,7 @@ function EditEventModal({ event, onClose, onUpdate }) {
     const handleInputChange = (e) => {
         const { name, value } = e.target;
         setFormData({ ...formData, [name]: value });
-        if (errors[name]) {
-            setErrors({ ...errors, [name]: '' });
-        }
+        setError('');
     };
 
     const handleServiceToggle = (service) => {
@@ -66,20 +64,27 @@ function EditEventModal({ event, onClose, onUpdate }) {
             : [...formData.services, service];
         
         setFormData({ ...formData, services: updatedServices });
-        if (errors.services) {
-            setErrors({ ...errors, services: '' });
-        }
+        setError('');
     };
 
     const validateForm = () => {
-        const allErrors = {
-            ...validateStep1(formData),
-            ...validateStep2(formData),
-            ...validateStep3(formData)
-        };
-        
-        setErrors(allErrors);
-        return Object.keys(allErrors).length === 0;
+        if (!formData.clientName || !formData.clientEmail || !formData.clientPhone) {
+            setError('Nom, email et téléphone sont requis');
+            return false;
+        }
+        if (!formData.locationId) {
+            setError('Veuillez sélectionner un lieu');
+            return false;
+        }
+        if (!formData.dateStart || !formData.dateEnd) {
+            setError('Les dates sont requises');
+            return false;
+        }
+        if (!formData.paymentMethod) {
+            setError('Mode de paiement requis');
+            return false;
+        }
+        return true;
     };
 
     const handleSubmit = async (e) => {
@@ -90,14 +95,17 @@ function EditEventModal({ event, onClose, onUpdate }) {
         }
 
         setLoading(true);
+        setError('');
+        
         try {
+            console.log('📤 Envoi modification événement:', formData); // Debug
             await eventService.updateEvent(event.id, formData);
-            alert('Événement modifié avec succès');
-            onUpdate();
-            onClose();
+            alert('Événement modifié avec succès !');
+            onUpdate(); // Rafraîchir la liste
+            onClose(); // Fermer le modal
         } catch (error) {
-            console.error('Erreur modification:', error);
-            alert('Erreur lors de la modification');
+            console.error('❌ Erreur modification:', error);
+            setError('Erreur lors de la modification. Veuillez réessayer.');
         } finally {
             setLoading(false);
         }
@@ -105,11 +113,17 @@ function EditEventModal({ event, onClose, onUpdate }) {
 
     return (
         <div className="modal-overlay" onClick={onClose}>
-            <div className="modal-content" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '700px' }}>
+            <div className="modal-content" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '700px', maxHeight: '90vh', overflowY: 'auto' }}>
                 <div className="modal-header">
                     <h2>✏️ Modifier l'événement #{event.id}</h2>
                     <button className="modal-close" onClick={onClose}>✕</button>
                 </div>
+
+                {error && (
+                    <div className="alert alert-error" style={{ marginBottom: '1rem' }}>
+                        {error}
+                    </div>
+                )}
 
                 <form onSubmit={handleSubmit}>
                     {/* Informations client */}
@@ -121,11 +135,11 @@ function EditEventModal({ event, onClose, onUpdate }) {
                                 <input
                                     type="text"
                                     name="clientName"
-                                    className={`form-input ${errors.clientName ? 'error' : ''}`}
+                                    className="form-input"
                                     value={formData.clientName}
                                     onChange={handleInputChange}
+                                    required
                                 />
-                                {errors.clientName && <span className="form-error">{errors.clientName}</span>}
                             </div>
 
                             <div className="form-group">
@@ -133,11 +147,11 @@ function EditEventModal({ event, onClose, onUpdate }) {
                                 <input
                                     type="email"
                                     name="clientEmail"
-                                    className={`form-input ${errors.clientEmail ? 'error' : ''}`}
+                                    className="form-input"
                                     value={formData.clientEmail}
                                     onChange={handleInputChange}
+                                    required
                                 />
-                                {errors.clientEmail && <span className="form-error">{errors.clientEmail}</span>}
                             </div>
                         </div>
 
@@ -147,11 +161,11 @@ function EditEventModal({ event, onClose, onUpdate }) {
                                 <input
                                     type="tel"
                                     name="clientPhone"
-                                    className={`form-input ${errors.clientPhone ? 'error' : ''}`}
+                                    className="form-input"
                                     value={formData.clientPhone}
                                     onChange={handleInputChange}
+                                    required
                                 />
-                                {errors.clientPhone && <span className="form-error">{errors.clientPhone}</span>}
                             </div>
 
                             <div className="form-group">
@@ -174,9 +188,10 @@ function EditEventModal({ event, onClose, onUpdate }) {
                             <label className="form-label required">Lieu</label>
                             <select
                                 name="locationId"
-                                className={`form-select ${errors.locationId ? 'error' : ''}`}
+                                className="form-select"
                                 value={formData.locationId}
                                 onChange={handleInputChange}
+                                required
                             >
                                 <option value="">-- Sélectionnez --</option>
                                 {locations.map(location => (
@@ -185,7 +200,6 @@ function EditEventModal({ event, onClose, onUpdate }) {
                                     </option>
                                 ))}
                             </select>
-                            {errors.locationId && <span className="form-error">{errors.locationId}</span>}
                         </div>
 
                         <div className="form-row">
@@ -194,9 +208,10 @@ function EditEventModal({ event, onClose, onUpdate }) {
                                 <input
                                     type="datetime-local"
                                     name="dateStart"
-                                    className={`form-input ${errors.dateRange ? 'error' : ''}`}
+                                    className="form-input"
                                     value={formData.dateStart}
                                     onChange={handleInputChange}
+                                    required
                                 />
                             </div>
 
@@ -205,19 +220,19 @@ function EditEventModal({ event, onClose, onUpdate }) {
                                 <input
                                     type="datetime-local"
                                     name="dateEnd"
-                                    className={`form-input ${errors.dateRange ? 'error' : ''}`}
+                                    className="form-input"
                                     value={formData.dateEnd}
                                     onChange={handleInputChange}
+                                    required
                                 />
                             </div>
                         </div>
-                        {errors.dateRange && <span className="form-error">{errors.dateRange}</span>}
                     </div>
 
                     {/* Services */}
                     <div className="form-section">
                         <h3>🎯 Services</h3>
-                        <div className="services-grid">
+                        <div className="services-grid" style={{ gridTemplateColumns: '1fr', gap: '0.5rem' }}>
                             {services.map((service, index) => (
                                 <div key={index} className="service-checkbox">
                                     <input
@@ -226,14 +241,13 @@ function EditEventModal({ event, onClose, onUpdate }) {
                                         checked={formData.services.includes(service)}
                                         onChange={() => handleServiceToggle(service)}
                                     />
-                                    <label htmlFor={`edit-service-${index}`}>
+                                    <label htmlFor={`edit-service-${index}`} style={{ padding: '0.8rem' }}>
                                         <div className="checkbox-custom"></div>
                                         <span className="service-name">{service}</span>
                                     </label>
                                 </div>
                             ))}
                         </div>
-                        {errors.services && <span className="form-error">{errors.services}</span>}
                     </div>
 
                     {/* Paiement */}
@@ -243,16 +257,16 @@ function EditEventModal({ event, onClose, onUpdate }) {
                             <label className="form-label required">Mode de paiement</label>
                             <select
                                 name="paymentMethod"
-                                className={`form-select ${errors.paymentMethod ? 'error' : ''}`}
+                                className="form-select"
                                 value={formData.paymentMethod}
                                 onChange={handleInputChange}
+                                required
                             >
                                 <option value="">-- Choisir --</option>
                                 {paymentMethods.map((method, index) => (
                                     <option key={index} value={method}>{method}</option>
                                 ))}
                             </select>
-                            {errors.paymentMethod && <span className="form-error">{errors.paymentMethod}</span>}
                         </div>
 
                         <div className="form-group">
@@ -269,11 +283,22 @@ function EditEventModal({ event, onClose, onUpdate }) {
 
                     {/* Boutons */}
                     <div style={{ display: 'flex', gap: '1rem', marginTop: '2rem' }}>
-                        <button type="button" className="btn btn-secondary" onClick={onClose} style={{ flex: 1 }}>
+                        <button 
+                            type="button" 
+                            className="btn btn-secondary" 
+                            onClick={onClose} 
+                            style={{ flex: 1 }}
+                            disabled={loading}
+                        >
                             Annuler
                         </button>
-                        <button type="submit" className="btn btn-primary" disabled={loading} style={{ flex: 1 }}>
-                            {loading ? 'Modification...' : 'Enregistrer'}
+                        <button 
+                            type="submit" 
+                            className="btn btn-primary" 
+                            disabled={loading} 
+                            style={{ flex: 1 }}
+                        >
+                            {loading ? 'Enregistrement...' : '✅ Enregistrer'}
                         </button>
                     </div>
                 </form>

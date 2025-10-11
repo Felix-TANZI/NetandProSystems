@@ -51,13 +51,15 @@ export const eventService = {
     // Mettre à jour un événement
     updateEvent: async (eventId, eventData) => {
     try {
+        console.log('📤 Mise à jour événement:', eventId, eventData); // Debug
         const response = await api.put(`/events/${eventId}`, eventData);
+        console.log('✅ Événement mis à jour:', response.data); // Debug
         return response.data;
     } catch (error) {
-        console.error('Erreur updateEvent:', error);
+        console.error('❌ Erreur updateEvent:', error.response?.data || error.message);
         throw error;
     }
-    },
+},
 
 // Mettre à jour le statut
     updateStatus: async (eventId, status) => {

@@ -28,16 +28,38 @@ exports.getStats = async (req, res) => {
 
         // Services les plus demandés
         const [servicesResult] = await pool.execute(`
-            SELECT services FROM events
+            SELECT services FROM events WHERE services IS NOT NULL
         `);
 
-        // Compter les services
+        // Compter les services avec gestion d'erreurs ROBUSTE
         const servicesCount = {};
         servicesResult.forEach(row => {
-            const services = JSON.parse(row.services);
-            services.forEach(service => {
-                servicesCount[service] = (servicesCount[service] || 0) + 1;
-            });
+            try {
+                let services = [];
+                
+                // Vérifier si c'est du JSON valide
+                if (row.services && typeof row.services === 'string') {
+                    if (row.services.trim().startsWith('[')) {
+                        services = JSON.parse(row.services);
+                    } else {
+                        // Texte brut, le mettre dans un array
+                        services = [row.services];
+                    }
+                } else if (Array.isArray(row.services)) {
+                    services = row.services;
+                }
+                
+                if (Array.isArray(services)) {
+                    services.forEach(service => {
+                        if (service && typeof service === 'string') {
+                            servicesCount[service] = (servicesCount[service] || 0) + 1;
+                        }
+                    });
+                }
+            } catch (error) {
+                console.error('⚠️ Erreur parsing services dans stats:', error.message);
+                console.error('   Données: ', row.services);
+            }
         });
 
         // Trier par popularité
@@ -54,7 +76,10 @@ exports.getStats = async (req, res) => {
         });
 
     } catch (error) {
-        console.error('Erreur récupération stats:', error);
-        res.status(500).json({ message: 'Erreur serveur' });
+        console.error('❌ Erreur récupération stats:', error);
+        res.status(500).json({ 
+            message: 'Erreur serveur',
+            error: error.message 
+        });
     }
 };

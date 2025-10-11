@@ -17,6 +17,9 @@ class Event {
             conditionsAccepted
         } = eventData;
 
+        // S'assurer que services est un array
+        const servicesArray = Array.isArray(services) ? services : [];
+
         const query = `
             INSERT INTO events (
                 client_name, client_email, client_phone, company_name,
@@ -33,7 +36,7 @@ class Event {
             dateStart,
             dateEnd,
             locationId,
-            JSON.stringify(services),
+            JSON.stringify(servicesArray), // Toujours convertir en JSON
             paymentMethod,
             notes || null,
             conditionsAccepted ? 1 : 0
@@ -59,11 +62,36 @@ class Event {
 
         const [rows] = await pool.execute(query);
         
-        // Parser les services JSON
-        return rows.map(event => ({
-            ...event,
-            services: JSON.parse(event.services)
-        }));
+        // Parser les services JSON avec gestion d'erreurs ROBUSTE
+        return rows.map(event => {
+            let parsedServices = [];
+            
+            try {
+                // Vérifier si services existe et est une string
+                if (event.services && typeof event.services === 'string') {
+                    // Vérifier si ça commence par '[' (JSON array)
+                    if (event.services.trim().startsWith('[')) {
+                        parsedServices = JSON.parse(event.services);
+                    } else {
+                        // Si c'est du texte brut, le mettre dans un array
+                        console.warn(`⚠️ Services non-JSON pour événement ${event.id}: ${event.services}`);
+                        parsedServices = [event.services];
+                    }
+                } else if (Array.isArray(event.services)) {
+                    // Déjà un array (ne devrait pas arriver)
+                    parsedServices = event.services;
+                }
+            } catch (error) {
+                console.error(`❌ Erreur parsing services pour événement ${event.id}:`, error.message);
+                console.error(`   Données brutes: ${event.services}`);
+                parsedServices = [];
+            }
+            
+            return {
+                ...event,
+                services: parsedServices
+            };
+        });
     }
 
     // Récupérer les événements publics (pour le calendrier)
@@ -109,9 +137,23 @@ class Event {
         
         if (rows.length === 0) return null;
         
+        let parsedServices = [];
+        try {
+            if (rows[0].services && typeof rows[0].services === 'string') {
+                if (rows[0].services.trim().startsWith('[')) {
+                    parsedServices = JSON.parse(rows[0].services);
+                } else {
+                    parsedServices = [rows[0].services];
+                }
+            }
+        } catch (error) {
+            console.error(`Erreur parsing services pour événement ${id}:`, error);
+            parsedServices = [];
+        }
+        
         return {
             ...rows[0],
-            services: JSON.parse(rows[0].services)
+            services: parsedServices
         };
     }
 
