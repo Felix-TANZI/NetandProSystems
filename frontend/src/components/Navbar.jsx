@@ -24,7 +24,7 @@ function Navbar() {
                     <li><Link to="/" onClick={() => setMenuOpen(false)}>Accueil</Link></li>
                     <li><Link to="/planifier" onClick={() => setMenuOpen(false)}>Planifier</Link></li>
                     <li><Link to="/about" onClick={() => setMenuOpen(false)}>À propos</Link></li>
-                    <li><Link to="/admin" onClick={() => setMenuOpen(false)}>Admin</Link></li>
+                    {/* Lien Admin retiré - accès uniquement via URL directe /admin */}
                 </ul>
             </div>
         </nav>

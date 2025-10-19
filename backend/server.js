@@ -30,6 +30,14 @@ app.use(cors({
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// Header de sécurité : Empêcher l'indexation des pages admin
+app.use((req, res, next) => {
+    if (req.path.startsWith('/admin')) {
+        res.setHeader('X-Robots-Tag', 'noindex, nofollow');
+    }
+    next();
+});
+
 // Routes API
 app.get('/api/health', (req, res) => {
     res.json({ status: 'OK', message: 'Backend NetandPro opérationnel' });

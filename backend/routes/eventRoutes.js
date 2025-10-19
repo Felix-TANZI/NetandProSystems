@@ -1,16 +1,29 @@
 const express = require('express');
 const router = express.Router();
 const eventController = require('../controllers/eventController');
+const authMiddleware = require('../middleware/authMiddleware');
 
-// Routes publiques
+// ROUTES PUBLIQUES
+// Calendrier page d'accueil (visiteurs)
 router.get('/public', eventController.getPublicEvents);
+
+// Créer un événement depuis le formulaire Planifier (visiteurs)
 router.post('/', eventController.createEvent);
 
-// Routes admin (à sécuriser avec authMiddleware plus tard)
-router.get('/', eventController.getAllEvents);
-router.get('/:id', eventController.getEventById);
-router.put('/:id', eventController.updateEvent);         
-router.patch('/:id/status', eventController.updateEventStatus);
-router.delete('/:id', eventController.deleteEvent);
+// ROUTES ADMIN (PROTÉGÉES)
+// Liste complète des événements (admin)
+router.get('/', authMiddleware, eventController.getAllEvents);
+
+// Détails d'un événement (admin)
+router.get('/:id', authMiddleware, eventController.getEventById);
+
+// Modifier un événement (admin)
+router.put('/:id', authMiddleware, eventController.updateEvent);
+
+// Changer le statut d'un événement (admin)
+router.patch('/:id/status', authMiddleware, eventController.updateEventStatus);
+
+// Supprimer un événement (admin)
+router.delete('/:id', authMiddleware, eventController.deleteEvent);
 
 module.exports = router;

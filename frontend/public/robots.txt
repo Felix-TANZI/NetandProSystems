@@ -1,3 +1,27 @@
-# https://www.robotstxt.org/robotstxt.html
+# Bloque l'accès aux pages admin et fichiers sensibles
+
 User-agent: *
-Disallow:
+# Pages publiques autorisées
+Allow: /
+Allow: /planifier
+Allow: /about
+
+# Pages admin et sensibles interdites
+Disallow: /admin
+Disallow: /admin/*
+
+# Bloquer les bots connus pour scraping agressif
+User-agent: AhrefsBot
+Disallow: /
+
+User-agent: SemrushBot
+Disallow: /
+
+User-agent: MJ12bot
+Disallow: /
+
+User-agent: DotBot
+Disallow: /
+
+# Sitemap
+Sitemap: https://www.netandprosystem.com/sitemap.xml
