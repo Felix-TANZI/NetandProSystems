@@ -9,6 +9,7 @@ import ProtectedRoute from './components/ProtectedRoute';
 import Home from './pages/Home';
 import Planifier from './pages/Planifier';
 import About from './pages/About';
+import Contact from './pages/Contact';
 
 // Pages admin
 import AdminLogin from './pages/AdminLogin';
@@ -30,6 +31,7 @@ function App() {
                                     <Route path="/" element={<Home />} />
                                     <Route path="/planifier" element={<Planifier />} />
                                     <Route path="/about" element={<About />} />
+                                    <Route path="/contact" element={<Contact />} />
                                 </Routes>
                             </main>
                             <Footer />

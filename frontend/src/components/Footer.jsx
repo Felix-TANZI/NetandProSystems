@@ -1,44 +1,84 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
+import { Phone, Mail, MapPin } from 'lucide-react';
+import '../styles/footer.css';
 
 function Footer() {
+    const currentYear = new Date().getFullYear();
+
     return (
-        <footer style={styles.footer}>
-            <div className="container" style={styles.content}>
-                <p>&copy; 2025 NetandProSystems. Tous droits réservés.</p>
-                <div style={styles.links}>
-                    <a href="https://www.netandprosystems.com" target="_blank" rel="noopener noreferrer">
-                        Site principal
-                    </a>
-                    <span style={styles.separator}>|</span>
-                    <a href="tanzifelix@gmail.com">Contact</a>
+        <footer className="footer">
+            <div className="footer-container">
+                {/* Section 1: Logo et description */}
+                <div className="footer-section">
+                    <div className="footer-logo">
+                        NetandPro <span>Systems</span>
+                    </div>
+                    <p className="footer-description">
+                        Votre partenaire de confiance pour l'organisation d'événements professionnels 
+                        et personnels d'exception au Cameroun.
+                    </p>
+                    <div className="footer-social">
+                        {/* Prevu pour ajouter des icônes sociales ici plus tard */}
+                    </div>
+                </div>
+
+                {/* Section 2: Navigation rapide */}
+                <div className="footer-section">
+                    <h4 className="footer-title">Navigation</h4>
+                    <ul className="footer-links">
+                        <li><Link to="/">Accueil</Link></li>
+                        <li><Link to="/planifier">Planifier un événement</Link></li>
+                        <li><Link to="/about">À propos</Link></li>
+                        <li><Link to="/contact">Contact</Link></li>
+                    </ul>
+                </div>
+
+                {/* Section 3: Services */}
+                <div className="footer-section">
+                    <h4 className="footer-title">Nos services</h4>
+                    <ul className="footer-links">
+                        <li>Interprétation simultanée</li>
+                        <li>Sonorisation professionnelle</li>
+                        <li>Vidéo & Projection</li>
+                        <li>Conférence hybride</li>
+                        <li>Solutions intégrées</li>
+                    </ul>
+                </div>
+
+                {/* Section 4: Contact */}
+                <div className="footer-section">
+                    <h4 className="footer-title">Contact</h4>
+                    <ul className="footer-contact">
+                        <li>
+                            <Phone size={18} />
+                            <a href="tel:+237698200792">+237 698 200 792</a>
+                        </li>
+                        <li>
+                            <Mail size={18} />
+                            <a href="mailto:contact@netandprosystems.com">contact@netandprosystems.com</a>
+                        </li>
+                        <li>
+                            <MapPin size={18} />
+                            <span>Yaoundé, Cameroun</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            {/* Barre du bas */}
+            <div className="footer-bottom">
+                <div className="footer-container">
+                    <p>&copy; {currentYear} NetandProSystems. Tous droits réservés.</p>
+                    <div className="footer-bottom-links">
+                        <Link to="/about">Mentions légales</Link>
+                        <span className="separator">•</span>
+                        <Link to="/about">Politique de confidentialité</Link>
+                    </div>
                 </div>
             </div>
         </footer>
     );
 }
-
-const styles = {
-    footer: {
-        background: '#1f2937',
-        color: '#fff',
-        padding: '2rem 0',
-        marginTop: '4rem',
-        textAlign: 'center'
-    },
-    content: {
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '1rem'
-    },
-    links: {
-        display: 'flex',
-        justifyContent: 'center',
-        gap: '1rem',
-        alignItems: 'center'
-    },
-    separator: {
-        color: '#6b7280'
-    }
-};
 
 export default Footer;

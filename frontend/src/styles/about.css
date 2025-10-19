@@ -764,3 +764,36 @@
         padding: 2rem;
     }
 }
+
+/* Wrapper des icônes dans "Comment ça marche" */
+.step-icon-wrapper {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 70px;
+    height: 70px;
+    background: linear-gradient(135deg, rgba(30, 64, 175, 0.1), rgba(16, 185, 129, 0.1));
+    border-radius: 16px;
+    margin-bottom: 1.5rem;
+    transition: all 0.3s ease;
+}
+
+.step-item:hover .step-icon-wrapper {
+    transform: scale(1.1) rotate(5deg);
+    background: linear-gradient(135deg, rgba(30, 64, 175, 0.15), rgba(16, 185, 129, 0.15));
+}
+
+/* Ajustements pour les titres et paragraphes des étapes */
+.step-content h3 {
+    font-size: 1.5rem;
+    color: var(--dark);
+    margin-bottom: 1rem;
+    margin-top: 0.5rem;
+}
+
+.step-content p {
+    color: var(--gray);
+    line-height: 1.8;
+    font-size: 1.05rem;
+    text-align: justify;
+}

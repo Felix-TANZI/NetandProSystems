@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { ClipboardList, Calendar, Volume2, Briefcase, CheckCircle, Zap, Building2, Target, Users, Phone, Mail, MapPin, User } from 'lucide-react';
 import '../styles/about.css';
 
 function About() {
@@ -77,7 +78,7 @@ function About() {
         setCurrentService((prev) => (prev - 1 + services.length) % services.length);
     };
 
-    // Défilement automatique du carrousel (toutes les 4 secondes)
+    // Défilement automatique du carrousel
     useEffect(() => {
         const interval = setInterval(() => {
             setCurrentService((prev) => (prev + 1) % services.length);
@@ -86,7 +87,7 @@ function About() {
         return () => clearInterval(interval);
     }, [services.length]);
 
-    // Animation au scroll pour la timeline
+    // Animation au scroll
     useEffect(() => {
         const observer = new IntersectionObserver(
             (entries) => {
@@ -130,14 +131,8 @@ function About() {
                         <h2>Qui sommes-nous ?</h2>
                         <p>
                             <strong>NetandProSystems</strong> est une plateforme innovante de planification d'événements lancée en 2025. 
-                            Notre mission est de simplifier l'organisation d'événements professionnels et personnels en proposant 
-                            une solution digitale complète et intuitive.
-                        </p>
-                        <p>
-                            Nous mettons à votre disposition un large choix de <strong>lieux prestigieux</strong> (Hilton Yaoundé, 
-                            LAGON Club, Palais des Congrès, Hôtel Mont Fébé, Hôtel Starland) et des <strong>services techniques 
-                            de pointe</strong> incluant la sonorisation, l'interprétation simultanée, la vidéo-projection, 
-                            l'éclairage professionnel, et bien plus encore.
+                            Nous combinons technologie moderne et expertise événementielle pour vous offrir une solution complète de 
+                            gestion d'événements professionnels et personnels.
                         </p>
                         <p>
                             Que vous organisiez une conférence internationale, un séminaire d'entreprise, un gala, ou un événement 
@@ -153,45 +148,107 @@ function About() {
                 <div className="container">
                     <div className="section-header">
                         <h2 className="section-title">Comment ça marche ?</h2>
-                        <p className="section-subtitle">Organisez votre événement en 4 étapes simples</p>
+                        <p className="section-subtitle">Planifiez votre événement en 5 étapes simples</p>
                     </div>
 
                     <div className="steps-container">
+                        {/* ÉTAPE 1 */}
                         <div className="step-item">
                             <div className="step-number">1</div>
                             <div className="step-content">
-                                <div className="step-icon">🏢</div>
-                                <h3>Choisissez votre lieu & services</h3>
-                                <p>Sélectionnez parmi nos 5 établissements premium et cochez les services techniques dont vous avez besoin parmi notre catalogue complet.</p>
+                                <div className="step-icon-wrapper">
+                                    <ClipboardList size={40} color="#1e40af" strokeWidth={2} />
+                                </div>
+                                <h3>Renseignez vos informations</h3>
+                                <p>
+                                    Commencez par remplir vos informations de contact : nom complet, raison sociale, 
+                                    adresse, téléphone et email. Vous pouvez également ajouter votre NUI (Numéro d'Identification Unique) 
+                                    si vous en disposez. Ces informations nous permettront de vous identifier et de vous recontacter 
+                                    facilement pour confirmer votre réservation.
+                                </p>
                             </div>
                         </div>
 
+                        {/* ÉTAPE 2 */}
                         <div className="step-item">
                             <div className="step-number">2</div>
                             <div className="step-content">
-                                <div className="step-icon">📅</div>
-                                <h3>Planifiez les détails</h3>
-                                <p>Définissez vos dates et horaires, renseignez vos informations de contact, et choisissez votre mode de paiement préféré (virement, Mobile Money, espèces, chèque).</p>
+                                <div className="step-icon-wrapper">
+                                    <Calendar size={40} color="#1e40af" strokeWidth={2} />
+                                </div>
+                                <h3>Définissez les détails de votre événement</h3>
+                                <p>
+                                    Sélectionnez le lieu parmi nos 5 établissements premium (Hilton Yaoundé, LAGON Club, 
+                                    Palais des Congrès, Hôtel Mont Fébé, Hôtel Starland). Indiquez les dates de début et de fin 
+                                    de votre événement, le nombre de participants attendus et le nombre de jours de location. 
+                                    Ces informations nous permettent de préparer l'espace selon vos besoins spécifiques.
+                                </p>
                             </div>
                         </div>
 
+                        {/* ÉTAPE 3 */}
                         <div className="step-item">
                             <div className="step-number">3</div>
                             <div className="step-content">
-                                <div className="step-icon">✅</div>
-                                <h3>Validation & Confirmation</h3>
-                                <p>Consultez le récapitulatif complet de votre réservation, validez votre demande et recevez instantanément un email de confirmation avec tous les détails.</p>
+                                <div className="step-icon-wrapper">
+                                    <Volume2 size={40} color="#1e40af" strokeWidth={2} />
+                                </div>
+                                <h3>Choisissez vos services audio/vidéo</h3>
+                                <p>
+                                    Sélectionnez parmi notre gamme complète de services techniques : traduction simultanée, 
+                                    sonorisation professionnelle, conférence hybride, écrans géants, microphones de table, 
+                                    moniteurs de contrôle, caméras tracking, et solutions Zoom intégrées ou à distance. 
+                                    Vous pouvez cocher plusieurs services selon les besoins de votre événement pour une 
+                                    expérience audiovisuelle optimale.
+                                </p>
                             </div>
                         </div>
 
+                        {/* ÉTAPE 4 */}
                         <div className="step-item">
                             <div className="step-number">4</div>
                             <div className="step-content">
-                                <div className="step-icon">🎉</div>
-                                <h3>Jour J - Profitez</h3>
-                                <p>Tout est prêt ! Concentrez-vous sur l'essentiel pendant que notre équipe technique assure le bon déroulement de votre événement. Suivez le statut en temps réel via votre espace.</p>
+                                <div className="step-icon-wrapper">
+                                    <Briefcase size={40} color="#1e40af" strokeWidth={2} />
+                                </div>
+                                <h3>Ajoutez des services complémentaires</h3>
+                                <p>
+                                    Complétez votre événement avec nos services d'interprétation (interprètes professionnels, 
+                                    cabines de traduction, interprétation d'escorte) et nos services bureautiques (copieurs 
+                                    couleur/N&B, imprimantes, ordinateurs, secrétariat, gestion complète, assistance technique). 
+                                    Précisez le nombre de langues nécessaires si vous optez pour l'interprétation. Ces options 
+                                    garantissent le bon déroulement de votre événement de A à Z.
+                                </p>
                             </div>
                         </div>
+
+                        {/* ÉTAPE 5 */}
+                        <div className="step-item">
+                            <div className="step-number">5</div>
+                            <div className="step-content">
+                                <div className="step-icon-wrapper">
+                                    <CheckCircle size={40} color="#10b981" strokeWidth={2} />
+                                </div>
+                                <h3>Confirmez et validez votre réservation</h3>
+                                <p>
+                                    Consultez le récapitulatif détaillé de votre événement avec tous les services sélectionnés. 
+                                    Choisissez vos conditions de paiement (50/50 ou 70/30) et votre mode de paiement préféré 
+                                    (chèque, espèces, MTN Mobile Money, Orange Money, virement bancaire). Ajoutez des notes 
+                                    particulières si nécessaire, acceptez nos conditions générales et validez votre demande. 
+                                    Vous recevrez instantanément un email de confirmation avec tous les détails de votre réservation !
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* CTA après les étapes */}
+                    <div style={{ textAlign: 'center', marginTop: '4rem' }}>
+                        <p style={{ fontSize: '1.2rem', marginBottom: '2rem', color: 'var(--gray)' }}>
+                            Prêt à commencer ? Planifiez votre événement dès maintenant !
+                        </p>
+                        <Link to="/planifier" className="btn btn-primary" style={{ padding: '1rem 2.5rem', fontSize: '1.1rem' }}>
+                            Démarrer votre projet →
+                        </Link>
                     </div>
                 </div>
             </section>
@@ -247,7 +304,7 @@ function About() {
                 </div>
             </section>
 
-            {/* Partners Slider avec VRAIS LOGOS PNG */}
+            {/* Partners Slider */}
             <section className="partners-section">
                 <div className="container">
                     <div className="section-header">
@@ -264,7 +321,6 @@ function About() {
                                         alt={partner.name}
                                         className="partner-logo-img"
                                         onError={(e) => {
-                                            // Fallback si l'image ne charge pas
                                             e.target.style.display = 'none';
                                             e.target.nextSibling.style.display = 'block';
                                         }}
@@ -290,7 +346,9 @@ function About() {
                     <div className="why-us-grid">
                         <div className="why-card">
                             <div className="why-card-header">
-                                <div className="why-card-icon">🚀</div>
+                                <div className="why-card-icon">
+                                    <Zap size={32} color="white" strokeWidth={2.5} />
+                                </div>
                                 <h3>Simple et rapide</h3>
                             </div>
                             <p>
@@ -302,7 +360,9 @@ function About() {
 
                         <div className="why-card">
                             <div className="why-card-header">
-                                <div className="why-card-icon">🏢</div>
+                                <div className="why-card-icon">
+                                    <Building2 size={32} color="white" strokeWidth={2.5} />
+                                </div>
                                 <h3>Lieux premium</h3>
                             </div>
                             <p>
@@ -314,7 +374,9 @@ function About() {
 
                         <div className="why-card">
                             <div className="why-card-header">
-                                <div className="why-card-icon">🎯</div>
+                                <div className="why-card-icon">
+                                    <Target size={32} color="white" strokeWidth={2.5} />
+                                </div>
                                 <h3>Services complets</h3>
                             </div>
                             <p>
@@ -326,7 +388,9 @@ function About() {
 
                         <div className="why-card">
                             <div className="why-card-header">
-                                <div className="why-card-icon">💼</div>
+                                <div className="why-card-icon">
+                                    <Users size={32} color="white" strokeWidth={2.5} />
+                                </div>
                                 <h3>Suivi professionnel</h3>
                             </div>
                             <p>
@@ -351,7 +415,9 @@ function About() {
                         <div className="contact-grid">
                             <div className="contact-card">
                                 <div className="contact-card-header">
-                                    <div className="contact-icon">📞</div>
+                                    <div className="contact-icon">
+                                        <Phone size={24} color="white" strokeWidth={2} />
+                                    </div>
                                     <h4>Téléphone</h4>
                                 </div>
                                 <div className="contact-card-content">
@@ -361,7 +427,9 @@ function About() {
 
                             <div className="contact-card">
                                 <div className="contact-card-header">
-                                    <div className="contact-icon">📧</div>
+                                    <div className="contact-icon">
+                                        <Mail size={24} color="white" strokeWidth={2} />
+                                    </div>
                                     <h4>Email</h4>
                                 </div>
                                 <div className="contact-card-content">
@@ -371,7 +439,9 @@ function About() {
 
                             <div className="contact-card">
                                 <div className="contact-card-header">
-                                    <div className="contact-icon">📍</div>
+                                    <div className="contact-icon">
+                                        <MapPin size={24} color="white" strokeWidth={2} />
+                                    </div>
                                     <h4>Localisation</h4>
                                 </div>
                                 <div className="contact-card-content">
@@ -381,7 +451,9 @@ function About() {
 
                             <div className="contact-card">
                                 <div className="contact-card-header">
-                                    <div className="contact-icon">👤</div>
+                                    <div className="contact-icon">
+                                        <User size={24} color="white" strokeWidth={2} />
+                                    </div>
                                     <h4>Responsable</h4>
                                 </div>
                                 <div className="contact-card-content">
