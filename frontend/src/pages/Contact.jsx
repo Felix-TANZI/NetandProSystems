@@ -58,15 +58,33 @@ function Contact() {
 
         setIsSubmitting(true);
 
-        // Simulation d'envoi (remplace par API qu'on implementera plus tard)
-        setTimeout(() => {
-            setIsSubmitting(false);
-            setSubmitted(true);
-            setFormData({ name: '', email: '', phone: '', subject: '', message: '' });
+        try {
+            // Appel API backend
+            const response = await fetch('http://localhost:5000/api/email/contact', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(formData)
+            });
 
-            // Réinitialiser après 5 secondes
-            setTimeout(() => setSubmitted(false), 5000);
-        }, 1500);
+            const data = await response.json();
+
+            if (data.success) {
+                setSubmitted(true);
+                setFormData({ name: '', email: '', phone: '', subject: '', message: '' });
+
+                // Réinitialiser après 5 secondes
+                setTimeout(() => setSubmitted(false), 5000);
+            } else {
+                alert(data.message || 'Erreur lors de l\'envoi du message');
+            }
+        } catch (error) {
+            console.error('Erreur:', error);
+            alert('Erreur de connexion au serveur. Vérifiez que le backend est démarré.');
+        } finally {
+            setIsSubmitting(false);
+        }
     };
 
     return (

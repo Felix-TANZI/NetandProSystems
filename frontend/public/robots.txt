@@ -5,6 +5,7 @@ User-agent: *
 Allow: /
 Allow: /planifier
 Allow: /about
+Allow: /contact
 
 # Pages admin et sensibles interdites
 Disallow: /admin

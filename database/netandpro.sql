@@ -94,3 +94,17 @@ INSERT INTO locations (name, parent_id) VALUES
 -- Créer un compte admin par défaut (password: yaounde0102)
 INSERT INTO users (email, password_hash, password_expiration) VALUES 
 ('tanzifelix@gmail.com', '$2a$10$ftu0176ujiDMAsQgCKi8yeHqjXpDtQO3EGBkABlcfrCSSekf1e5YS', DATE_ADD(CURDATE(), INTERVAL 3 MONTH));
+
+-- Table pour stocker les messages de contact
+CREATE TABLE IF NOT EXISTS contact_messages (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    email VARCHAR(255) NOT NULL,
+    phone VARCHAR(50),
+    subject VARCHAR(255) NOT NULL,
+    message TEXT NOT NULL,
+    status ENUM('nouveau', 'lu', 'traite') DEFAULT 'nouveau',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    INDEX idx_status (status),
+    INDEX idx_created_at (created_at)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
