@@ -15,7 +15,7 @@ const loginLimiter = rateLimit({
 // Rate limiter pour contact (3 messages par heure par IP)
 const contactLimiter = rateLimit({
     windowMs: 60 * 60 * 1000, // 1 heure
-    max: 3, // 3 messages max par heure
+    max: 10, // 3 messages max par heure
     message: {
         success: false,
         message: 'Vous avez atteint la limite de messages. Réessayez dans 1 heure.'

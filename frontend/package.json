@@ -1,7 +1,20 @@
 {
-  "name": "frontend",
+  "name": "netandprosystems-frontend",
   "version": "0.1.0",
   "private": true,
+  "description": "Application web de gestion d'événements professionnels pour NetandProSystems",
+  "author": {
+    "name": "NZIKO Felix Andre",
+    "company": "NetandProSystems",
+    "email": "contact@netandprosystem.com",
+    "url": "https://www.netandprosystem.com"
+  },
+  "license": "Proprietary",
+  "homepage": "https://www.netandprosystem.com",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Felix-TANZI/NetandProSystems"
+  },
   "dependencies": {
     "@fullcalendar/daygrid": "^6.1.19",
     "@fullcalendar/interaction": "^6.1.19",
