@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
+import { Shield, Mail, Lock, LogIn } from 'lucide-react';
 import '../styles/admin.css';
 
 function AdminLogin() {
@@ -37,10 +38,19 @@ function AdminLogin() {
 
     return (
         <div className="login-container">
+            <div className="login-background-shapes">
+                <div className="shape shape-1"></div>
+                <div className="shape shape-2"></div>
+                <div className="shape shape-3"></div>
+            </div>
+
             <div className="login-card">
                 <div className="login-header">
-                    <h1>🔐 Connexion Admin</h1>
-                    <p>NetandPro Events - Espace Administrateur</p>
+                    <div className="login-icon">
+                        <Shield size={48} strokeWidth={2} />
+                    </div>
+                    <h1>Admin Panel</h1>
+                    <p>NetandPro Systems - Espace Administrateur</p>
                 </div>
 
                 {error && (
@@ -51,7 +61,10 @@ function AdminLogin() {
 
                 <form className="login-form" onSubmit={handleSubmit}>
                     <div className="form-group">
-                        <label className="form-label">Email</label>
+                        <label className="form-label">
+                            <Mail size={18} />
+                            Email
+                        </label>
                         <input
                             type="email"
                             name="email"
@@ -64,7 +77,10 @@ function AdminLogin() {
                     </div>
 
                     <div className="form-group">
-                        <label className="form-label">Mot de passe</label>
+                        <label className="form-label">
+                            <Lock size={18} />
+                            Mot de passe
+                        </label>
                         <input
                             type="password"
                             name="password"
@@ -81,9 +97,14 @@ function AdminLogin() {
                         className="btn-login"
                         disabled={loading}
                     >
+                        <LogIn size={20} />
                         {loading ? 'Connexion...' : 'Se connecter'}
                     </button>
                 </form>
+
+                <div className="login-footer">
+                    <p>© 2025 NetandPro Systems. Tous droits réservés.</p>
+                </div>
             </div>
         </div>
     );

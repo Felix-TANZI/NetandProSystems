@@ -3,6 +3,7 @@ import { eventService } from '../services/eventService';
 import AdminSidebar from '../components/AdminSidebar';
 import EventModal from '../components/EventModal';
 import EditEventModal from '../components/EditEventModal';
+import { Calendar, Search, Filter, Eye, Edit2, Trash2, CheckCircle2, Clock, XCircle } from 'lucide-react';
 import '../styles/admin.css';
 
 function AdminEvents() {
@@ -37,7 +38,6 @@ function AdminEvents() {
     const filterEvents = () => {
         let filtered = [...events];
 
-        // Filtre par recherche
         if (searchTerm) {
             filtered = filtered.filter(event =>
                 event.client_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -46,7 +46,6 @@ function AdminEvents() {
             );
         }
 
-        // Filtre par statut
         if (statusFilter !== 'all') {
             filtered = filtered.filter(event => event.status === statusFilter);
         }
@@ -78,39 +77,22 @@ function AdminEvents() {
         }
     };
 
-    const exportToCSV = () => {
-        const headers = ['ID', 'Client', 'Email', 'Téléphone', 'Lieu', 'Date début', 'Date fin', 'Statut', 'Paiement'];
-        const rows = filteredEvents.map(event => [
-            event.id,
-            event.client_name,
-            event.client_email,
-            event.client_phone,
-            event.location_name,
-            new Date(event.date_start).toLocaleString('fr-FR'),
-            new Date(event.date_end).toLocaleString('fr-FR'),
-            event.status,
-            event.payment_method
-        ]);
-
-        const csvContent = [
-            headers.join(','),
-            ...rows.map(row => row.map(cell => `"${cell}"`).join(','))
-        ].join('\n');
-
-        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-        const link = document.createElement('a');
-        link.href = URL.createObjectURL(blob);
-        link.download = `evenements_${new Date().toISOString().split('T')[0]}.csv`;
-        link.click();
-    };
-
-    const getStatusBadgeClass = (status) => {
-        switch (status) {
-            case 'Confirmé': return 'status-confirmed';
-            case 'En attente': return 'status-pending';
-            case 'Annulé': return 'status-cancelled';
-            default: return '';
-        }
+    const getStatusBadge = (status) => {
+        const statusConfig = {
+            'Confirmé': { icon: CheckCircle2, className: 'status-confirmed' },
+            'En attente': { icon: Clock, className: 'status-pending' },
+            'Annulé': { icon: XCircle, className: 'status-cancelled' }
+        };
+        
+        const config = statusConfig[status] || statusConfig['En attente'];
+        const Icon = config.icon;
+        
+        return (
+            <span className={`status-badge ${config.className}`}>
+                <Icon size={14} />
+                {status}
+            </span>
+        );
     };
 
     return (
@@ -119,10 +101,10 @@ function AdminEvents() {
 
             <main className="admin-main">
                 <div className="admin-header">
-                    <h1>📅 Gestion des événements</h1>
-                    <button className="btn btn-secondary" onClick={exportToCSV}>
-                        📥 Exporter CSV
-                    </button>
+                    <h1>
+                        <Calendar size={32} strokeWidth={2.5} />
+                        Gestion des événements
+                    </h1>
                 </div>
 
                 <div className="admin-card">
@@ -130,44 +112,54 @@ function AdminEvents() {
                         <h2>Liste des événements ({filteredEvents.length})</h2>
                         
                         <div className="search-bar">
-                            <input
-                                type="text"
-                                className="search-input"
-                                placeholder="Rechercher par nom, email, lieu..."
-                                value={searchTerm}
-                                onChange={(e) => setSearchTerm(e.target.value)}
-                            />
+                            <div className="search-input-wrapper">
+                                <Search size={20} className="search-icon" />
+                                <input
+                                    type="text"
+                                    className="search-input"
+                                    placeholder="Rechercher par nom, email ou lieu..."
+                                    value={searchTerm}
+                                    onChange={(e) => setSearchTerm(e.target.value)}
+                                />
+                            </div>
                             
-                            <select
-                                className="form-select"
-                                value={statusFilter}
-                                onChange={(e) => setStatusFilter(e.target.value)}
-                            >
-                                <option value="all">Tous les statuts</option>
-                                <option value="En attente">En attente</option>
-                                <option value="Confirmé">Confirmé</option>
-                                <option value="Annulé">Annulé</option>
-                            </select>
+                            <div className="filter-wrapper">
+                                <Filter size={20} className="filter-icon" />
+                                <select
+                                    className="filter-select"
+                                    value={statusFilter}
+                                    onChange={(e) => setStatusFilter(e.target.value)}
+                                >
+                                    <option value="all">Tous les statuts</option>
+                                    <option value="En attente">En attente</option>
+                                    <option value="Confirmé">Confirmé</option>
+                                    <option value="Annulé">Annulé</option>
+                                </select>
+                            </div>
                         </div>
                     </div>
 
                     {loading ? (
-                        <div style={{ textAlign: 'center', padding: '2rem' }}>
-                            <p>Chargement...</p>
+                        <div style={{ textAlign: 'center', padding: '3rem' }}>
+                            <p style={{ color: 'var(--admin-text-muted)' }}>Chargement des événements...</p>
                         </div>
                     ) : filteredEvents.length === 0 ? (
-                        <div style={{ textAlign: 'center', padding: '2rem', color: 'var(--gray)' }}>
-                            <p>Aucun événement trouvé</p>
+                        <div style={{ textAlign: 'center', padding: '3rem' }}>
+                            <Calendar size={64} color="var(--admin-text-muted)" strokeWidth={1} />
+                            <p style={{ color: 'var(--admin-text-muted)', marginTop: '1rem' }}>
+                                Aucun événement trouvé
+                            </p>
                         </div>
                     ) : (
-                        <div style={{ overflowX: 'auto' }}>
+                        <div className="table-wrapper">
                             <table className="events-table">
                                 <thead>
                                     <tr>
                                         <th>ID</th>
                                         <th>Client</th>
+                                        <th>Email</th>
                                         <th>Lieu</th>
-                                        <th>Date</th>
+                                        <th>Date début</th>
                                         <th>Statut</th>
                                         <th>Actions</th>
                                     </tr>
@@ -176,21 +168,15 @@ function AdminEvents() {
                                     {filteredEvents.map((event) => (
                                         <tr key={event.id}>
                                             <td>#{event.id}</td>
-                                            <td>
-                                                <strong>{event.client_name}</strong>
-                                                <br />
-                                                <small style={{ color: 'var(--gray)' }}>{event.client_email}</small>
-                                            </td>
+                                            <td className="td-name">{event.client_name}</td>
+                                            <td className="td-email">{event.client_email}</td>
                                             <td>{event.location_name}</td>
-                                            <td>
-                                                {new Date(event.date_start).toLocaleDateString('fr-FR')}
-                                            </td>
+                                            <td>{new Date(event.date_start).toLocaleDateString('fr-FR')}</td>
                                             <td>
                                                 <select
-                                                    className={`status-badge ${getStatusBadgeClass(event.status)}`}
+                                                    className="status-select"
                                                     value={event.status}
                                                     onChange={(e) => handleStatusChange(event.id, e.target.value)}
-                                                    style={{ border: 'none', cursor: 'pointer', fontWeight: '600' }}
                                                 >
                                                     <option value="En attente">En attente</option>
                                                     <option value="Confirmé">Confirmé</option>
@@ -202,20 +188,23 @@ function AdminEvents() {
                                                     <button
                                                         className="btn-action btn-view"
                                                         onClick={() => setSelectedEvent(event)}
+                                                        title="Voir les détails"
                                                     >
-                                                        👁️ Voir
+                                                        <Eye size={16} />
                                                     </button>
                                                     <button
                                                         className="btn-action btn-edit"
                                                         onClick={() => setEditingEvent(event)}
+                                                        title="Modifier"
                                                     >
-                                                        ✏️ Modifier
+                                                        <Edit2 size={16} />
                                                     </button>
                                                     <button
                                                         className="btn-action btn-delete"
                                                         onClick={() => handleDelete(event.id)}
+                                                        title="Supprimer"
                                                     >
-                                                        🗑️ Supprimer
+                                                        <Trash2 size={16} />
                                                     </button>
                                                 </div>
                                             </td>
@@ -228,7 +217,6 @@ function AdminEvents() {
                 </div>
             </main>
 
-            {/* Modal détails événement */}
             {selectedEvent && (
                 <EventModal
                     event={selectedEvent}
@@ -236,7 +224,6 @@ function AdminEvents() {
                 />
             )}
 
-            {/* Modal modification événement */}
             {editingEvent && (
                 <EditEventModal
                     event={editingEvent}

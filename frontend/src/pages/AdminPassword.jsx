@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import AdminSidebar from '../components/AdminSidebar';
+import { KeyRound, Lock, CheckCircle2, AlertCircle } from 'lucide-react';
 import '../styles/admin.css';
 
 function AdminPassword() {
@@ -80,24 +81,40 @@ function AdminPassword() {
 
             <main className="admin-main">
                 <div className="admin-header">
-                    <h1>🔑 Changer le mot de passe</h1>
+                    <h1>
+                        <KeyRound size={32} strokeWidth={2.5} />
+                        Changer le mot de passe
+                    </h1>
                 </div>
 
-                <div className="admin-card" style={{ maxWidth: '600px' }}>
-                    <h2>Sécurité du compte</h2>
-                    <p style={{ color: 'var(--gray)', marginBottom: '2rem' }}>
-                        Votre mot de passe expire tous les 3 mois. Changez-le régulièrement pour garantir la sécurité de votre compte.
-                    </p>
+                <div className="admin-card" style={{ maxWidth: '700px' }}>
+                    <div className="password-header">
+                        <Lock size={32} color="var(--admin-accent)" />
+                        <div>
+                            <h2>Sécurité du compte</h2>
+                            <p style={{ color: 'var(--admin-text-muted)', marginTop: '0.5rem' }}>
+                                Votre mot de passe expire tous les 3 mois. Changez-le régulièrement pour garantir la sécurité de votre compte.
+                            </p>
+                        </div>
+                    </div>
 
                     {message.text && (
-                        <div className={`alert ${message.type === 'success' ? 'alert-success' : 'alert-error'}`} style={{ marginBottom: '1.5rem' }}>
+                        <div className={`alert alert-${message.type}`}>
+                            {message.type === 'success' ? (
+                                <CheckCircle2 size={20} />
+                            ) : (
+                                <AlertCircle size={20} />
+                            )}
                             {message.text}
                         </div>
                     )}
 
-                    <form onSubmit={handleSubmit}>
-                        <div className="form-group" style={{ marginBottom: '1.5rem' }}>
-                            <label className="form-label required">Mot de passe actuel</label>
+                    <form onSubmit={handleSubmit} className="password-form">
+                        <div className="form-group">
+                            <label className="form-label">
+                                <Lock size={18} />
+                                Mot de passe actuel
+                            </label>
                             <input
                                 type="password"
                                 name="currentPassword"
@@ -106,11 +123,19 @@ function AdminPassword() {
                                 onChange={handleChange}
                                 placeholder="••••••••"
                             />
-                            {errors.currentPassword && <span className="form-error">{errors.currentPassword}</span>}
+                            {errors.currentPassword && (
+                                <span className="form-error">
+                                    <AlertCircle size={14} />
+                                    {errors.currentPassword}
+                                </span>
+                            )}
                         </div>
 
-                        <div className="form-group" style={{ marginBottom: '1.5rem' }}>
-                            <label className="form-label required">Nouveau mot de passe</label>
+                        <div className="form-group">
+                            <label className="form-label">
+                                <Lock size={18} />
+                                Nouveau mot de passe
+                            </label>
                             <input
                                 type="password"
                                 name="newPassword"
@@ -119,14 +144,19 @@ function AdminPassword() {
                                 onChange={handleChange}
                                 placeholder="••••••••"
                             />
-                            {errors.newPassword && <span className="form-error">{errors.newPassword}</span>}
-                            <small style={{ color: 'var(--gray)', fontSize: '0.85rem' }}>
-                                Minimum 8 caractères
-                            </small>
+                            {errors.newPassword && (
+                                <span className="form-error">
+                                    <AlertCircle size={14} />
+                                    {errors.newPassword}
+                                </span>
+                            )}
                         </div>
 
-                        <div className="form-group" style={{ marginBottom: '2rem' }}>
-                            <label className="form-label required">Confirmer le nouveau mot de passe</label>
+                        <div className="form-group">
+                            <label className="form-label">
+                                <Lock size={18} />
+                                Confirmer le mot de passe
+                            </label>
                             <input
                                 type="password"
                                 name="confirmPassword"
@@ -135,14 +165,19 @@ function AdminPassword() {
                                 onChange={handleChange}
                                 placeholder="••••••••"
                             />
-                            {errors.confirmPassword && <span className="form-error">{errors.confirmPassword}</span>}
+                            {errors.confirmPassword && (
+                                <span className="form-error">
+                                    <AlertCircle size={14} />
+                                    {errors.confirmPassword}
+                                </span>
+                            )}
                         </div>
 
                         <button
                             type="submit"
                             className="btn btn-primary"
                             disabled={loading}
-                            style={{ width: '100%', padding: '1rem' }}
+                            style={{ width: '100%', padding: '1rem', marginTop: '1rem' }}
                         >
                             {loading ? 'Modification...' : 'Changer le mot de passe'}
                         </button>

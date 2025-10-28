@@ -5,6 +5,8 @@ import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import { eventService } from '../services/eventService';
 import TestimonialForm from '../components/TestimonialForm';
+import EventCard from '../components/EventCard';
+import Calendar from '../components/Calendar';
 import '../styles/home.css';
 
 function Home() {
@@ -37,11 +39,9 @@ function Home() {
         }
     ];
 
-    // État pour tous les témoignages (statiques + dynamiques)
     const [allTestimonials, setAllTestimonials] = useState(staticTestimonials);
     const [currentTestimonial, setCurrentTestimonial] = useState(0);
 
-    // Services proposés
     const services = [
         { icon: '🎤', title: 'Interprétation simultanée', desc: 'Service professionnel multilingue' },
         { icon: '🔊', title: 'Sonorisation', desc: 'Équipement audio haute qualité' },
@@ -55,14 +55,12 @@ function Home() {
         { icon: '🌐', title: 'Interprétation à distance', desc: 'Service en ligne sécurisé' }
     ];
 
-    // Charger les événements depuis l'API
     useEffect(() => {
         const fetchEvents = async () => {
             try {
                 setIsLoading(true);
                 const data = await eventService.getPublicEvents();
                 
-                // Formater pour FullCalendar
                 const formattedEvents = data.map(event => ({
                     id: event.id,
                     title: event.client_name,
@@ -78,7 +76,6 @@ function Home() {
 
                 setEvents(formattedEvents);
                 
-                // Événements à venir (3 prochains)
                 const upcoming = data
                     .filter(e => new Date(e.date_start) >= new Date() && e.status === 'Confirmé')
                     .slice(0, 3);
@@ -94,21 +91,18 @@ function Home() {
         fetchEvents();
     }, []);
 
-    // Charger les témoignages dynamiques
     useEffect(() => {
         const fetchTestimonials = async () => {
             try {
                 const response = await fetch('http://localhost:5000/api/testimonials/recent');
                 const data = await response.json();
                 
-                // Formater les témoignages dynamiques
                 const formatted = data.map(t => ({
                     quote: t.comment,
                     author: t.client_name,
                     role: "Client NetandPro"
                 }));
 
-                // Combiner statiques + dynamiques
                 setAllTestimonials([...staticTestimonials, ...formatted]);
             } catch (error) {
                 console.error('Erreur chargement témoignages:', error);
@@ -116,9 +110,8 @@ function Home() {
         };
 
         fetchTestimonials();
-    }, [staticTestimonials]);
+    }, []);
 
-    // Rotation automatique témoignages
     useEffect(() => {
         const interval = setInterval(() => {
             setCurrentTestimonial((prev) => (prev + 1) % allTestimonials.length);
@@ -126,7 +119,6 @@ function Home() {
         return () => clearInterval(interval);
     }, [allTestimonials.length]);
 
-    // Animation scroll timeline
     useEffect(() => {
         const observer = new IntersectionObserver(
             (entries) => {
@@ -136,19 +128,17 @@ function Home() {
                     }
                 });
             },
-            { threshold: 0.2 }
+            { threshold: 0.1 }
         );
 
-        document.querySelectorAll('.timeline-item').forEach((item) => {
-            observer.observe(item);
-        });
+        const timelineItems = document.querySelectorAll('.timeline-item');
+        timelineItems.forEach((item) => observer.observe(item));
 
         return () => observer.disconnect();
     }, [upcomingEvents]);
 
-    // Couleur selon statut
     const getStatusColor = (status) => {
-        switch (status) {
+        switch(status) {
             case 'Confirmé': return '#10b981';
             case 'En attente': return '#f59e0b';
             case 'Annulé': return '#ef4444';
@@ -156,37 +146,13 @@ function Home() {
         }
     };
 
-    const getStatusClass = (status) => {
-        switch (status) {
-            case 'Confirmé': return 'status-confirmed';
-            case 'En attente': return 'status-pending';
-            case 'Annulé': return 'status-cancelled';
-            default: return '';
-        }
-    };
-
-    // Clic sur événement du calendrier
-    const handleEventClick = (info) => {
-        const { title, extendedProps } = info.event;
-        alert(`📅 Événement: ${title}\n📍 Lieu: ${extendedProps.location}\n✅ Statut: ${extendedProps.status}`);
-    };
-
-    // Filtrage événements
-    const getFilteredEvents = () => {
-        if (filter === 'all') return events;
-        if (filter === 'confirmed') return events.filter(e => e.extendedProps.status === 'Confirmé');
-        if (filter === 'pending') return events.filter(e => e.extendedProps.status === 'En attente');
-        return events;
-    };
-
     return (
-        <div className="home">
+        <div className="home-page">
             {/* Hero Section */}
             <section className="hero">
-                <div className="hero-content">
-                    <h1>Organisez des événements d'exception</h1>
+                <div className="container hero-content">
+                    <h1>Planifiez vos événements avec NetandPro</h1>
                     <p>
-                        Plateforme complète de planification pour vos événements professionnels et personnels.
                         Services techniques premium et gestion simplifiée.
                     </p>
                     <div className="hero-buttons">
@@ -210,83 +176,33 @@ function Home() {
                         </p>
                     </div>
 
-                    <div className="calendar-container">
-                        <div className="calendar-filters">
-                            <button 
-                                className={`filter-btn ${filter === 'all' ? 'active' : ''}`} 
-                                onClick={() => setFilter('all')}
-                            >
-                                Tous ({events.length})
-                            </button>
-                            <button 
-                                className={`filter-btn ${filter === 'confirmed' ? 'active' : ''}`} 
-                                onClick={() => setFilter('confirmed')}
-                            >
-                                Confirmés ({events.filter(e => e.extendedProps.status === 'Confirmé').length})
-                            </button>
-                            <button 
-                                className={`filter-btn ${filter === 'pending' ? 'active' : ''}`} 
-                                onClick={() => setFilter('pending')}
-                            >
-                                En attente ({events.filter(e => e.extendedProps.status === 'En attente').length})
-                            </button>
-                        </div>
-
-                        {isLoading ? (
-                            <div style={{ textAlign: 'center', padding: '3rem' }}>
-                                <p>Chargement du calendrier...</p>
-                            </div>
-                        ) : (
-                            <FullCalendar
-                                plugins={[dayGridPlugin, interactionPlugin]}
-                                initialView="dayGridMonth"
-                                events={getFilteredEvents()}
-                                eventClick={handleEventClick}
-                                height="auto"
-                                locale="fr"
-                                headerToolbar={{
-                                    left: 'prev,next today',
-                                    center: 'title',
-                                    right: 'dayGridMonth,dayGridWeek'
-                                }}
-                                buttonText={{
-                                    today: "Aujourd'hui",
-                                    month: 'Mois',
-                                    week: 'Semaine'
-                                }}
-                            />
-                        )}
-                    </div>
+                    <Calendar 
+                        events={events}
+                        filter={filter}
+                        onFilterChange={setFilter}
+                        isLoading={isLoading}
+                    />
                 </div>
             </section>
 
-            {/* Timeline Événements à venir */}
+            {/* Événements à venir */}
             <section className="section timeline-section">
                 <div className="container">
                     <div className="section-header">
-                        <h2 className="section-title">Prochains événements confirmés</h2>
-                        <p className="section-subtitle">Les événements à venir dans notre agenda</p>
+                        <h2 className="section-title">Événements à venir</h2>
+                        <p className="section-subtitle">
+                            Les prochains événements confirmés
+                        </p>
                     </div>
 
                     {upcomingEvents.length > 0 ? (
                         <div className="timeline">
                             {upcomingEvents.map((event, index) => (
-                                <div key={event.id} className="timeline-item" style={{ transitionDelay: `${index * 0.1}s` }}>
-                                    <div className="timeline-card">
-                                        <div className="timeline-date">
-                                            📅 {new Date(event.date_start).toLocaleDateString('fr-FR', { 
-                                                day: 'numeric', 
-                                                month: 'long', 
-                                                year: 'numeric' 
-                                            })}
-                                        </div>
-                                        <h3 className="timeline-title">{event.client_name}</h3>
-                                        <div className="timeline-location">📍 {event.location_name}</div>
-                                        <span className={`status-badge ${getStatusClass(event.status)}`}>
-                                            {event.status}
-                                        </span>
-                                    </div>
-                                </div>
+                                <EventCard 
+                                    key={event.id} 
+                                    event={event} 
+                                    index={index} 
+                                />
                             ))}
                         </div>
                     ) : (
@@ -322,7 +238,7 @@ function Home() {
                 </div>
             </section>
 
-            {/* Témoignages Carrousel 3D */}
+            {/* Témoignages Carrousel 3D - VERSION ORIGINALE */}
             <section className="section testimonials-section">
                 <div className="container">
                     <div className="section-header">
@@ -360,10 +276,7 @@ function Home() {
                         ))}
                     </div>
 
-                    {/* Formulaire de témoignage */}
-                    <div style={{ marginTop: '4rem' }}>
-                        <TestimonialForm />
-                    </div>
+                    <TestimonialForm />
                 </div>
             </section>
 
@@ -371,9 +284,9 @@ function Home() {
             <section className="cta-section">
                 <div className="container">
                     <h2>Prêt à planifier votre événement ?</h2>
-                    <p>Réservez dès maintenant et bénéficiez de nos services premium</p>
-                    <Link to="/planifier" className="btn btn-accent" style={{ fontSize: '1.2rem', padding: '1rem 2.5rem' }}>
-                        Commencer maintenant →
+                    <p>Contactez-nous dès maintenant pour une consultation gratuite</p>
+                    <Link to="/planifier" className="btn btn-accent" style={{ marginTop: '1rem' }}>
+                        Commencer maintenant
                     </Link>
                 </div>
             </section>

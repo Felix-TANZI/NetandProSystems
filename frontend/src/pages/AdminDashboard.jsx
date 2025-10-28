@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { statsService } from '../services/statsService';
 import AdminSidebar from '../components/AdminSidebar';
+import { Calendar, CheckCircle2, Clock, XCircle, TrendingUp, Target } from 'lucide-react';
 import '../styles/admin.css';
 
 function AdminDashboard() {
@@ -45,19 +46,24 @@ function AdminDashboard() {
             
             <main className="admin-main">
                 <div className="admin-header">
-                    <h1>📊 Tableau de bord</h1>
+                    <h1>
+                        <TrendingUp size={32} strokeWidth={2.5} />
+                        Tableau de bord
+                    </h1>
                 </div>
 
                 {loading ? (
                     <div style={{ textAlign: 'center', padding: '3rem' }}>
-                        <p>Chargement des statistiques...</p>
+                        <p style={{ color: 'var(--admin-text)' }}>Chargement des statistiques...</p>
                     </div>
                 ) : (
                     <>
                         {/* Stats Cards */}
                         <div className="stats-grid">
                             <div className="stat-card">
-                                <div className="stat-icon primary">📅</div>
+                                <div className="stat-icon primary">
+                                    <Calendar size={32} strokeWidth={2} color="white" />
+                                </div>
                                 <div className="stat-info">
                                     <h3>Total Événements</h3>
                                     <p>{stats.total}</p>
@@ -65,7 +71,9 @@ function AdminDashboard() {
                             </div>
 
                             <div className="stat-card">
-                                <div className="stat-icon success">✅</div>
+                                <div className="stat-icon success">
+                                    <CheckCircle2 size={32} strokeWidth={2} color="white" />
+                                </div>
                                 <div className="stat-info">
                                     <h3>Confirmés</h3>
                                     <p>{getStatusCount('Confirmé')}</p>
@@ -73,7 +81,9 @@ function AdminDashboard() {
                             </div>
 
                             <div className="stat-card">
-                                <div className="stat-icon warning">⏳</div>
+                                <div className="stat-icon warning">
+                                    <Clock size={32} strokeWidth={2} color="white" />
+                                </div>
                                 <div className="stat-info">
                                     <h3>En attente</h3>
                                     <p>{getStatusCount('En attente')}</p>
@@ -81,7 +91,9 @@ function AdminDashboard() {
                             </div>
 
                             <div className="stat-card">
-                                <div className="stat-icon danger">❌</div>
+                                <div className="stat-icon danger">
+                                    <XCircle size={32} strokeWidth={2} color="white" />
+                                </div>
                                 <div className="stat-info">
                                     <h3>Annulés</h3>
                                     <p>{getStatusCount('Annulé')}</p>
@@ -90,9 +102,12 @@ function AdminDashboard() {
                         </div>
 
                         {/* Événements par mois */}
-                        <div className="admin-card" style={{ marginBottom: '2rem' }}>
+                        <div className="admin-card">
                             <div className="admin-card-header">
-                                <h2>📈 Événements par mois (année en cours)</h2>
+                                <h2>
+                                    <TrendingUp size={24} />
+                                    Événements par mois (année en cours)
+                                </h2>
                             </div>
                             
                             <div style={{ display: 'flex', gap: '1rem', alignItems: 'flex-end', height: '200px' }}>
@@ -102,26 +117,28 @@ function AdminDashboard() {
                                             <div
                                                 style={{
                                                     height: `${(item.count / Math.max(...stats.byMonth.map(m => m.count))) * 150}px`,
-                                                    background: 'linear-gradient(180deg, var(--primary), var(--secondary))',
-                                                    borderRadius: '8px 8px 0 0',
+                                                    background: 'linear-gradient(180deg, #3b82f6, #2563eb)',
+                                                    borderRadius: '12px 12px 0 0',
                                                     display: 'flex',
                                                     alignItems: 'flex-start',
                                                     justifyContent: 'center',
                                                     paddingTop: '0.5rem',
                                                     color: 'white',
                                                     fontWeight: 'bold',
-                                                    minHeight: '40px'
+                                                    minHeight: '40px',
+                                                    boxShadow: '0 -4px 20px rgba(59, 130, 246, 0.3)',
+                                                    transition: 'all 0.3s ease'
                                                 }}
                                             >
                                                 {item.count}
                                             </div>
-                                            <div style={{ marginTop: '0.5rem', fontSize: '0.85rem', color: 'var(--gray)' }}>
+                                            <div style={{ marginTop: '0.5rem', fontSize: '0.85rem', color: 'var(--admin-text-muted)', fontWeight: '600' }}>
                                                 {monthNames[item.month - 1]}
                                             </div>
                                         </div>
                                     ))
                                 ) : (
-                                    <p style={{ color: 'var(--gray)', margin: 'auto' }}>Aucune donnée disponible</p>
+                                    <p style={{ color: 'var(--admin-text-muted)', margin: 'auto' }}>Aucune donnée disponible</p>
                                 )}
                             </div>
                         </div>
@@ -129,34 +146,47 @@ function AdminDashboard() {
                         {/* Services les plus demandés */}
                         <div className="admin-card">
                             <div className="admin-card-header">
-                                <h2>🎯 Top 5 services les plus demandés</h2>
+                                <h2>
+                                    <Target size={24} />
+                                    Top 5 services les plus demandés
+                                </h2>
                             </div>
 
                             {stats.topServices.length > 0 ? (
-                                <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
                                     {stats.topServices.map((service, index) => (
                                         <div key={index} style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
                                             <div style={{ 
-                                                minWidth: '200px', 
+                                                minWidth: '220px', 
                                                 fontWeight: '600',
-                                                color: 'var(--dark)'
+                                                color: 'var(--admin-text)',
+                                                fontSize: '1rem'
                                             }}>
                                                 {service.name}
                                             </div>
-                                            <div style={{ flex: 1, background: '#e5e7eb', borderRadius: '8px', height: '30px', position: 'relative' }}>
+                                            <div style={{ 
+                                                flex: 1, 
+                                                background: 'rgba(255, 255, 255, 0.05)', 
+                                                borderRadius: '12px', 
+                                                height: '40px', 
+                                                position: 'relative',
+                                                border: '1px solid var(--admin-border)'
+                                            }}>
                                                 <div
                                                     style={{
                                                         width: `${(service.count / stats.topServices[0].count) * 100}%`,
-                                                        background: 'linear-gradient(90deg, var(--primary), var(--secondary))',
+                                                        background: 'linear-gradient(90deg, #3b82f6, #10b981)',
                                                         height: '100%',
-                                                        borderRadius: '8px',
+                                                        borderRadius: '12px',
                                                         display: 'flex',
                                                         alignItems: 'center',
                                                         justifyContent: 'flex-end',
                                                         paddingRight: '1rem',
                                                         color: 'white',
                                                         fontWeight: 'bold',
-                                                        minWidth: '50px'
+                                                        minWidth: '60px',
+                                                        boxShadow: '0 4px 15px rgba(59, 130, 246, 0.3)',
+                                                        transition: 'all 0.3s ease'
                                                     }}
                                                 >
                                                     {service.count}
@@ -166,7 +196,7 @@ function AdminDashboard() {
                                     ))}
                                 </div>
                             ) : (
-                                <p style={{ color: 'var(--gray)', textAlign: 'center' }}>Aucun service enregistré</p>
+                                <p style={{ color: 'var(--admin-text-muted)', textAlign: 'center' }}>Aucun service enregistré</p>
                             )}
                         </div>
 
@@ -175,7 +205,7 @@ function AdminDashboard() {
                             <button
                                 className="btn btn-primary"
                                 onClick={() => navigate('/admin/events')}
-                                style={{ padding: '1rem 2rem', fontSize: '1.1rem' }}
+                                style={{ padding: '1.2rem 2.5rem', fontSize: '1.1rem' }}
                             >
                                 Gérer les événements →
                             </button>

@@ -1,60 +1,116 @@
 import React from 'react';
+import { X, User, Mail, Phone, Building, MapPin, Calendar, CreditCard, FileText } from 'lucide-react';
 
 function EventModal({ event, onClose }) {
     return (
         <div className="modal-overlay" onClick={onClose}>
             <div className="modal-content" onClick={(e) => e.stopPropagation()}>
                 <div className="modal-header">
-                    <h2>📋 Détails de l'événement</h2>
-                    <button className="modal-close" onClick={onClose}>✕</button>
+                    <h2>
+                        <FileText size={24} />
+                        Détails de l'événement #{event.id}
+                    </h2>
+                    <button className="modal-close" onClick={onClose}>
+                        <X size={24} />
+                    </button>
                 </div>
 
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                    <div>
-                        <strong>Client :</strong> {event.client_name}
-                    </div>
-                    <div>
-                        <strong>Email :</strong> {event.client_email}
-                    </div>
-                    <div>
-                        <strong>Téléphone :</strong> {event.client_phone}
-                    </div>
-                    {event.company_name && (
-                        <div>
-                            <strong>Entreprise :</strong> {event.company_name}
+                <div className="modal-body">
+                    <div className="modal-section">
+                        <h3>
+                            <User size={20} />
+                            Informations client
+                        </h3>
+                        <div className="modal-info-grid">
+                            <div className="modal-info-item">
+                                <User size={16} />
+                                <div>
+                                    <label>Nom complet</label>
+                                    <p>{event.client_name}</p>
+                                </div>
+                            </div>
+                            <div className="modal-info-item">
+                                <Mail size={16} />
+                                <div>
+                                    <label>Email</label>
+                                    <p>{event.client_email}</p>
+                                </div>
+                            </div>
+                            <div className="modal-info-item">
+                                <Phone size={16} />
+                                <div>
+                                    <label>Téléphone</label>
+                                    <p>{event.client_phone}</p>
+                                </div>
+                            </div>
+                            {event.company_name && (
+                                <div className="modal-info-item">
+                                    <Building size={16} />
+                                    <div>
+                                        <label>Entreprise</label>
+                                        <p>{event.company_name}</p>
+                                    </div>
+                                </div>
+                            )}
                         </div>
-                    )}
-                    <div>
-                        <strong>Lieu :</strong> {event.location_name}
                     </div>
-                    <div>
-                        <strong>Date de début :</strong> {new Date(event.date_start).toLocaleString('fr-FR')}
+
+                    <div className="modal-section">
+                        <h3>
+                            <Calendar size={20} />
+                            Détails de l'événement
+                        </h3>
+                        <div className="modal-info-grid">
+                            <div className="modal-info-item">
+                                <MapPin size={16} />
+                                <div>
+                                    <label>Lieu</label>
+                                    <p>{event.location_name}</p>
+                                </div>
+                            </div>
+                            <div className="modal-info-item">
+                                <Calendar size={16} />
+                                <div>
+                                    <label>Date de début</label>
+                                    <p>{new Date(event.date_start).toLocaleString('fr-FR')}</p>
+                                </div>
+                            </div>
+                            <div className="modal-info-item">
+                                <Calendar size={16} />
+                                <div>
+                                    <label>Date de fin</label>
+                                    <p>{new Date(event.date_end).toLocaleString('fr-FR')}</p>
+                                </div>
+                            </div>
+                            <div className="modal-info-item">
+                                <CreditCard size={16} />
+                                <div>
+                                    <label>Mode de paiement</label>
+                                    <p>{event.payment_method}</p>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div>
-                        <strong>Date de fin :</strong> {new Date(event.date_end).toLocaleString('fr-FR')}
-                    </div>
-                    <div>
-                        <strong>Services :</strong>
-                        <ul style={{ marginTop: '0.5rem', paddingLeft: '1.5rem' }}>
+
+                    <div className="modal-section">
+                        <h3>Services demandés</h3>
+                        <div className="services-list">
                             {event.services.map((service, index) => (
-                                <li key={index}>{service}</li>
+                                <span key={index} className="service-tag">
+                                    {service}
+                                </span>
                             ))}
-                        </ul>
+                        </div>
                     </div>
-                    <div>
-                        <strong>Mode de paiement :</strong> {event.payment_method}
-                    </div>
+
                     {event.notes && (
-                        <div>
-                            <strong>Notes :</strong>
-                            <p style={{ marginTop: '0.5rem', padding: '0.8rem', background: 'var(--light-gray)', borderRadius: '8px' }}>
-                                {event.notes}
-                            </p>
+                        <div className="modal-section">
+                            <h3>Notes</h3>
+                            <div className="notes-box">
+                                <p>{event.notes}</p>
+                            </div>
                         </div>
                     )}
-                    <div>
-                        <strong>Statut :</strong> <span className={`status-badge ${event.status === 'Confirmé' ? 'status-confirmed' : event.status === 'En attente' ? 'status-pending' : 'status-cancelled'}`}>{event.status}</span>
-                    </div>
                 </div>
             </div>
         </div>

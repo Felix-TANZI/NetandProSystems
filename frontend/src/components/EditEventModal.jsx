@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { eventService } from '../services/eventService';
+import { X, User, Mail, Phone, Building, MapPin, Calendar, CreditCard, FileText, Save } from 'lucide-react';
 
 function EditEventModal({ event, onClose, onUpdate }) {
     const [locations, setLocations] = useState([]);
@@ -98,11 +99,10 @@ function EditEventModal({ event, onClose, onUpdate }) {
         setError('');
         
         try {
-            console.log('📤 Envoi modification événement:', formData); // Debug
             await eventService.updateEvent(event.id, formData);
             alert('Événement modifié avec succès !');
-            onUpdate(); // Rafraîchir la liste
-            onClose(); // Fermer le modal
+            onUpdate();
+            onClose();
         } catch (error) {
             console.error('❌ Erreur modification:', error);
             setError('Erreur lors de la modification. Veuillez réessayer.');
@@ -113,25 +113,36 @@ function EditEventModal({ event, onClose, onUpdate }) {
 
     return (
         <div className="modal-overlay" onClick={onClose}>
-            <div className="modal-content" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '700px', maxHeight: '90vh', overflowY: 'auto' }}>
+            <div className="modal-content modal-large" onClick={(e) => e.stopPropagation()}>
                 <div className="modal-header">
-                    <h2>✏️ Modifier l'événement #{event.id}</h2>
-                    <button className="modal-close" onClick={onClose}>✕</button>
+                    <h2>
+                        <FileText size={24} />
+                        Modifier l'événement #{event.id}
+                    </h2>
+                    <button className="modal-close" onClick={onClose}>
+                        <X size={24} />
+                    </button>
                 </div>
 
                 {error && (
-                    <div className="alert alert-error" style={{ marginBottom: '1rem' }}>
+                    <div className="alert alert-error">
                         {error}
                     </div>
                 )}
 
-                <form onSubmit={handleSubmit}>
+                <form onSubmit={handleSubmit} className="modal-form">
                     {/* Informations client */}
                     <div className="form-section">
-                        <h3>👤 Informations client</h3>
-                        <div className="form-row">
+                        <h3>
+                            <User size={20} />
+                            Informations client
+                        </h3>
+                        <div className="form-grid">
                             <div className="form-group">
-                                <label className="form-label required">Nom complet</label>
+                                <label className="form-label required">
+                                    <User size={16} />
+                                    Nom complet
+                                </label>
                                 <input
                                     type="text"
                                     name="clientName"
@@ -143,7 +154,10 @@ function EditEventModal({ event, onClose, onUpdate }) {
                             </div>
 
                             <div className="form-group">
-                                <label className="form-label required">Email</label>
+                                <label className="form-label required">
+                                    <Mail size={16} />
+                                    Email
+                                </label>
                                 <input
                                     type="email"
                                     name="clientEmail"
@@ -153,11 +167,12 @@ function EditEventModal({ event, onClose, onUpdate }) {
                                     required
                                 />
                             </div>
-                        </div>
 
-                        <div className="form-row">
                             <div className="form-group">
-                                <label className="form-label required">Téléphone</label>
+                                <label className="form-label required">
+                                    <Phone size={16} />
+                                    Téléphone
+                                </label>
                                 <input
                                     type="tel"
                                     name="clientPhone"
@@ -169,7 +184,10 @@ function EditEventModal({ event, onClose, onUpdate }) {
                             </div>
 
                             <div className="form-group">
-                                <label className="form-label">Entreprise (optionnel)</label>
+                                <label className="form-label">
+                                    <Building size={16} />
+                                    Entreprise (optionnel)
+                                </label>
                                 <input
                                     type="text"
                                     name="companyName"
@@ -181,30 +199,39 @@ function EditEventModal({ event, onClose, onUpdate }) {
                         </div>
                     </div>
 
-                    {/* Lieu et dates */}
+                    {/* Détails événement */}
                     <div className="form-section">
-                        <h3>📍 Lieu et période</h3>
-                        <div className="form-group">
-                            <label className="form-label required">Lieu</label>
-                            <select
-                                name="locationId"
-                                className="form-select"
-                                value={formData.locationId}
-                                onChange={handleInputChange}
-                                required
-                            >
-                                <option value="">-- Sélectionnez --</option>
-                                {locations.map(location => (
-                                    <option key={location.id} value={location.id}>
-                                        {location.full_name}
-                                    </option>
-                                ))}
-                            </select>
-                        </div>
-
-                        <div className="form-row">
+                        <h3>
+                            <Calendar size={20} />
+                            Détails de l'événement
+                        </h3>
+                        <div className="form-grid">
                             <div className="form-group">
-                                <label className="form-label required">Date début</label>
+                                <label className="form-label required">
+                                    <MapPin size={16} />
+                                    Lieu
+                                </label>
+                                <select
+                                    name="locationId"
+                                    className="form-select"
+                                    value={formData.locationId}
+                                    onChange={handleInputChange}
+                                    required
+                                >
+                                    <option value="">-- Sélectionner un lieu --</option>
+                                    {locations.map((location) => (
+                                        <option key={location.id} value={location.id}>
+                                            {location.name}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+
+                            <div className="form-group">
+                                <label className="form-label required">
+                                    <Calendar size={16} />
+                                    Date de début
+                                </label>
                                 <input
                                     type="datetime-local"
                                     name="dateStart"
@@ -216,7 +243,10 @@ function EditEventModal({ event, onClose, onUpdate }) {
                             </div>
 
                             <div className="form-group">
-                                <label className="form-label required">Date fin</label>
+                                <label className="form-label required">
+                                    <Calendar size={16} />
+                                    Date de fin
+                                </label>
                                 <input
                                     type="datetime-local"
                                     name="dateEnd"
@@ -226,79 +256,78 @@ function EditEventModal({ event, onClose, onUpdate }) {
                                     required
                                 />
                             </div>
+
+                            <div className="form-group">
+                                <label className="form-label required">
+                                    <CreditCard size={16} />
+                                    Mode de paiement
+                                </label>
+                                <select
+                                    name="paymentMethod"
+                                    className="form-select"
+                                    value={formData.paymentMethod}
+                                    onChange={handleInputChange}
+                                    required
+                                >
+                                    <option value="">-- Choisir --</option>
+                                    {paymentMethods.map((method, index) => (
+                                        <option key={index} value={method}>{method}</option>
+                                    ))}
+                                </select>
+                            </div>
                         </div>
                     </div>
 
                     {/* Services */}
                     <div className="form-section">
-                        <h3>🎯 Services</h3>
-                        <div className="services-grid" style={{ gridTemplateColumns: '1fr', gap: '0.5rem' }}>
+                        <h3>Services demandés</h3>
+                        <div className="services-grid">
                             {services.map((service, index) => (
-                                <div key={index} className="service-checkbox">
+                                <label key={index} className="service-checkbox">
                                     <input
                                         type="checkbox"
-                                        id={`edit-service-${index}`}
                                         checked={formData.services.includes(service)}
                                         onChange={() => handleServiceToggle(service)}
                                     />
-                                    <label htmlFor={`edit-service-${index}`} style={{ padding: '0.8rem' }}>
-                                        <div className="checkbox-custom"></div>
-                                        <span className="service-name">{service}</span>
-                                    </label>
-                                </div>
+                                    <span>{service}</span>
+                                </label>
                             ))}
                         </div>
                     </div>
 
-                    {/* Paiement */}
+                    {/* Notes */}
                     <div className="form-section">
-                        <h3>💳 Paiement</h3>
-                        <div className="form-group">
-                            <label className="form-label required">Mode de paiement</label>
-                            <select
-                                name="paymentMethod"
-                                className="form-select"
-                                value={formData.paymentMethod}
-                                onChange={handleInputChange}
-                                required
-                            >
-                                <option value="">-- Choisir --</option>
-                                {paymentMethods.map((method, index) => (
-                                    <option key={index} value={method}>{method}</option>
-                                ))}
-                            </select>
-                        </div>
-
-                        <div className="form-group">
-                            <label className="form-label">Notes</label>
-                            <textarea
-                                name="notes"
-                                className="form-textarea"
-                                value={formData.notes}
-                                onChange={handleInputChange}
-                                rows="3"
-                            />
-                        </div>
+                        <h3>
+                            <FileText size={20} />
+                            Notes
+                        </h3>
+                        <textarea
+                            name="notes"
+                            className="form-textarea"
+                            value={formData.notes}
+                            onChange={handleInputChange}
+                            rows="4"
+                            placeholder="Notes additionnelles..."
+                        />
                     </div>
 
                     {/* Boutons */}
-                    <div style={{ display: 'flex', gap: '1rem', marginTop: '2rem' }}>
+                    <div className="form-actions">
                         <button 
                             type="button" 
                             className="btn btn-secondary" 
-                            onClick={onClose} 
-                            style={{ flex: 1 }}
+                            onClick={onClose}
                             disabled={loading}
                         >
                             Annuler
                         </button>
                         <button 
                             type="submit" 
-                            className="btn btn-primary" 
-                            disabled={loading} 
-                            style={{ flex: 1 }}
+                            className="btn btn-primary"
+                            disabled={loading}
                         >
-                            {loading ? 'Enregistrement...' : '✅ Enregistrer'}
+                            <Save size={20} />
+                            {loading ? 'Enregistrement...' : 'Enregistrer'}
                         </button>
                     </div>
                 </form>
