@@ -108,3 +108,18 @@ CREATE TABLE IF NOT EXISTS contact_messages (
     INDEX idx_status (status),
     INDEX idx_created_at (created_at)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Remplacer 'Mobile Money' par 'MTN Mobile Money' dans les événements existants
+UPDATE events 
+SET payment_method = 'MTN Mobile Money' 
+WHERE payment_method = 'Mobile Money';
+
+-- Modifier la colonne payment_method avec les nouveaux modes de paiement
+ALTER TABLE events 
+MODIFY COLUMN payment_method ENUM(
+    'Virement bancaire',
+    'Espèces',
+    'MTN Mobile Money',
+    'Orange Money',
+    'Chèque'
+) NOT NULL;

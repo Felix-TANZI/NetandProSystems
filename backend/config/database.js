@@ -8,6 +8,7 @@ const pool = mysql.createPool({
     user: process.env.DB_USER,
     password: process.env.DB_PASSWORD,
     database: process.env.DB_NAME,
+    charset: 'utf8mb4',
     waitForConnections: true,
     connectionLimit: 10,
     queueLimit: 0
@@ -17,6 +18,7 @@ const pool = mysql.createPool({
 pool.getConnection()
     .then(connection => {
         console.log('✅ Connexion MySQL réussie');
+        
         connection.release();
     })
     .catch(err => {
